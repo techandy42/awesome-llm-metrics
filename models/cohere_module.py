@@ -6,18 +6,6 @@ load_dotenv()
 
 COHERE_API_KEY = os.environ.get("COHERE_API_KEY")
 
-co = cohere.Client(COHERE_API_KEY)
-response = co.chat(
-  chat_history=[
-    {"role": "USER", "message": "Who discovered gravity?"},
-    {"role": "CHATBOT", "message": "The man who is widely credited with discovering gravity is Sir Isaac Newton"}
-  ],
-  message="What year was he born?",
-  # perform web search before answering the question. You can also use your own custom connector.
-  connectors=[{"id": "web-search"}]
-)
-print(response.text)
-
 class CohereModel:
   def __init__(self, api_key: str = COHERE_API_KEY, model: str = "command-r"):
     self.client = cohere.Client(api_key)

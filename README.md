@@ -26,6 +26,7 @@ An open-source framework that makes evaluating LLMs &amp; prompt engineering x10
 !curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-468.0.0-linux-x86_64.tar.gz
 !tar -xf google-cloud-cli-468.0.0-linux-x86_64.tar.gz
 !./google-cloud-sdk/install.sh
+# Open a new terminal
 !gcloud auth login
 # Please refer to Official Documentation for full details: https://cloud.google.com/sdk/docs/install-sdk
 ```
