@@ -1,2 +1,2 @@
 # awesome-llm-metrics
-An open-source frameworks that makes evaluating LLMs &amp; prompt engineering x10 easier!
+An open-source framework that makes evaluating LLMs &amp; prompt engineering x10 easier!
