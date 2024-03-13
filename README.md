@@ -2,8 +2,11 @@
 An open-source framework that makes evaluating LLMs &amp; prompt engineering x10 easier!
 
 ### Conda Environment
-- To run the program locally, please copy the conda environment by running `conda env create -f environment.yml`.
-- Afterwards, please activate the environment with `conda activate env`.
+- To run the program locally, please copy the conda environment and activate it.
+```bash
+!conda env create -f environment.yml
+!conda activate env
+```
 
 ### Running Program
 - To run individual models, please run `python3 -m models.openai_module` (or other module names).
