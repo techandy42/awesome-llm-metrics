@@ -12,11 +12,10 @@ def translate(prompt: str, src_lang: str, tgt_lang: str, models: List[BaseModel]
             translation = future.result()
             results.append((index, translation))
     
+    # Sort results by model index
     results.sort(key=lambda x: x[0])
-    indices = [result[0] for result in results]
-    translations = [result[1] for result in results]
     
-    return translations, indices
+    return results
 
 def summarize(prompt: str, models: List[BaseModel]) -> Tuple[List[str], List[int]]:
     with ThreadPoolExecutor() as executor:
@@ -29,10 +28,8 @@ def summarize(prompt: str, models: List[BaseModel]) -> Tuple[List[str], List[int
             results.append((index, summary))
     
     results.sort(key=lambda x: x[0])
-    indices = [result[0] for result in results]
-    summaries = [result[1] for result in results]
     
-    return summaries, indices
+    return results
 
 def q_and_a(prompt: str, models: List[BaseModel]) -> Tuple[List[str], List[int]]:
     with ThreadPoolExecutor() as executor:
@@ -45,10 +42,8 @@ def q_and_a(prompt: str, models: List[BaseModel]) -> Tuple[List[str], List[int]]
             results.append((index, answer))
     
     results.sort(key=lambda x: x[0])
-    indices = [result[0] for result in results]
-    answers = [result[1] for result in results]
     
-    return answers, indices
+    return results
 
 def complete_sentence(prompt: str, models: List[BaseModel]) -> Tuple[List[str], List[int]]:
     with ThreadPoolExecutor() as executor:
@@ -61,10 +56,8 @@ def complete_sentence(prompt: str, models: List[BaseModel]) -> Tuple[List[str], 
             results.append((index, completion))
     
     results.sort(key=lambda x: x[0])
-    indices = [result[0] for result in results]
-    completions = [result[1] for result in results]
     
-    return completions, indices
+    return results
 
 def complete_missing_word(prompt: str, models: List[BaseModel]) -> Tuple[List[str], List[int]]:
     with ThreadPoolExecutor() as executor:
@@ -77,10 +70,8 @@ def complete_missing_word(prompt: str, models: List[BaseModel]) -> Tuple[List[st
             results.append((index, completion))
     
     results.sort(key=lambda x: x[0])
-    indices = [result[0] for result in results]
-    completions = [result[1] for result in results]
     
-    return completions, indices
+    return results
 
 if __name__ == "__main__":
     import argparse
@@ -123,7 +114,7 @@ if __name__ == "__main__":
     src_lang = "English"
     tgt_lang = "French"
     prompt = "What is the answer to life, universe, and everything?"
-    translations, indices = translate(prompt, src_lang, tgt_lang, models)
-    for translation, index in zip(translations, indices):
+    results = translate(prompt, src_lang, tgt_lang, models)
+    for index, translation in results:
         print(models[index])
         print(f"===== Translation =====\nEnglish: {prompt}\nFrench: {translation}\n")
