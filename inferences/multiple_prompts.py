@@ -114,6 +114,7 @@ def complete_missing_word_mult(prompts: List[str], models: List[BaseModel]) -> L
 
     return all_results
 
+# Test Case
 if __name__ == "__main__":
   import argparse
   from models.openai_module import OpenAIModel

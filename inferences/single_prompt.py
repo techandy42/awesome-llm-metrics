@@ -73,6 +73,7 @@ def complete_missing_word(prompt: str, models: List[BaseModel]) -> Tuple[List[st
     
     return results
 
+# Test Case
 if __name__ == "__main__":
     import argparse
     from models.openai_module import OpenAIModel
