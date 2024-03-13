@@ -1,17 +1,21 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+from models.base_module import BaseModel
 
 load_dotenv()
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-class OpenAIModel:
+class OpenAIModel(BaseModel):
   def __init__(self, api_key: str = OPENAI_API_KEY, model: str = "gpt-4-0125-preview"):
     self.client = OpenAI(
         api_key=api_key,
     )
     self.model = model
+
+  def __str__(self) -> str:
+    return f"OpenAI,{self.model}"
 
   def call(self, prompt: str) -> str:
     completion = self.client.chat.completions.create(
@@ -80,31 +84,34 @@ Sentence:
 
 # Test Cases
 if __name__ == "__main__":
-  openai_model = OpenAIModel()
+  gpt4_model = OpenAIModel()
+
+  # Model Details
+  print(gpt4_model)
 
   # Translation
   src_lang = "English"
   tgt_lang = "French"
   prompt = "What is the answer to life, universe, and everything?"
-  response = openai_model.translate(prompt=prompt, src_lang=src_lang, tgt_lang=tgt_lang)
+  response = gpt4_model.translate(prompt=prompt, src_lang=src_lang, tgt_lang=tgt_lang)
   print(f"===== Translation =====\nEnglish: {prompt}\nFrench: {response}\n")
 
   # Summarization
   prompt = "The Alexander the Great was a king of the ancient Greek kingdom of Macedon and a member of the Argead dynasty. He was born in Pella in 356 BC and succeeded his father Philip II to the throne at the age of 20. He spent most of his ruling years on an unprecedented military campaign through Western Asia and Northeastern Africa, and by the age of thirty, he had created one of the largest empires of the ancient world, stretching from Greece to northwestern India. He was undefeated in battle and is widely considered one of history's most successful military commanders."
-  response = openai_model.summarize(prompt=prompt)
+  response = gpt4_model.summarize(prompt=prompt)
   print(f"===== Summarization =====\nOriginal: {prompt}\nSummary: {response}\n")
 
   # Q&A
   prompt = "What happens to you if you eat watermelon seeds?"
-  response = openai_model.q_and_a(prompt=prompt)
+  response = gpt4_model.q_and_a(prompt=prompt)
   print(f"===== Q&A =====\nQuestion: {prompt}\nAnswer: {response}\n")
 
   # Completion - Sentence
   prompt = "Then, the man writes over the snow covering the window of a car, and a woman wearing winter clothes smiles. then"
-  response = openai_model.complete_sentence(prompt=prompt)
+  response = gpt4_model.complete_sentence(prompt=prompt)
   print(f"===== Completion - Sentence =====\nPrompt: {prompt}\nCompletion: {response}\nCombined: {prompt + ' ' + response}\n")
 
   # Completion - Missing Word
   prompt = "John moved the couch from the garage to the backyard to create space. The _ is small."
-  response = openai_model.complete_missing_word(prompt=prompt)
+  response = gpt4_model.complete_missing_word(prompt=prompt)
   print(f"===== Completion - Missing Word =====\nPrompt: {prompt}\nMissing Word: {response}\nCombined: {prompt.replace('_', response)}\n")

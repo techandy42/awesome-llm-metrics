@@ -1,12 +1,13 @@
 import os
 from dotenv import load_dotenv
 from groq import Groq
+from models.base_module import BaseModel
 
 load_dotenv()
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
-class GroqModel:
+class GroqModel(BaseModel):
   def __init__(self, api_key: str = GROQ_API_KEY, model: str = "mixtral-8x7b-32768"):
     self.client = Groq(
         api_key=api_key,
@@ -22,6 +23,9 @@ class GroqModel:
     )
 
     return completion.choices[0].message.content
+
+  def __str__(self) -> str:
+    return f"Groq,{self.model}"
 
   def translate(self, prompt: str, src_lang: str, tgt_lang: str) -> str:
     prompt_template = f"""Instruction:
@@ -81,6 +85,9 @@ Sentence:
 # Test Cases
 if __name__ == "__main__":
   groq_mixtral_model = GroqModel()
+
+  # Model Details
+  print(groq_mixtral_model)
 
   # Translation
   src_lang = "English"

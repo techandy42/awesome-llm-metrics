@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import vertexai
 from vertexai.generative_models import GenerativeModel
+from models.base_module import BaseModel
 
 load_dotenv()
 
@@ -10,18 +11,19 @@ GOOGLE_PROJECT_ID = os.environ.get("GOOGLE_PROJECT_ID")
 GOOGLE_LOCATION = os.environ.get("GOOGLE_LOCATION")
 vertexai.init(project=GOOGLE_PROJECT_ID, location=GOOGLE_LOCATION)
 
-class GoogleVertexAIModel:
+class GoogleVertexAIModel(BaseModel):
   def __init__(self, project_id: str = GOOGLE_PROJECT_ID, location: str = GOOGLE_LOCATION, model: str = "gemini-1.0-pro"):
     vertexai.init(project=project_id, location=location)
     model_instance = GenerativeModel(model)
     self.client = model_instance.start_chat()
+    self.model = model
   
   def call(self, prompt: str) -> str:
-    text_response = []
-    responses = self.client.send_message(prompt, stream=True)
-    for chunk in responses:
-        text_response.append(chunk.text)
-    return "".join(text_response)
+    response = self.client.send_message(prompt)
+    return response.text
+
+  def __str__(self) -> str:
+    return f"GoogleVertexAI,{self.model}"
 
   def translate(self, prompt: str, src_lang: str, tgt_lang: str) -> str:
     prompt_template = f"""Instruction:
@@ -81,6 +83,9 @@ Sentence:
 # Test Cases
 if __name__ == "__main__":
   gemini_model = GoogleVertexAIModel()
+
+  # Model Details
+  print(gemini_model)
 
   # Translation
   src_lang = "English"

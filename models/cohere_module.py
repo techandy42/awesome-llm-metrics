@@ -1,12 +1,13 @@
 import os
 from dotenv import load_dotenv
 import cohere
+from models.base_module import BaseModel
 
 load_dotenv()
 
 COHERE_API_KEY = os.environ.get("COHERE_API_KEY")
 
-class CohereModel:
+class CohereModel(BaseModel):
   def __init__(self, api_key: str = COHERE_API_KEY, model: str = "command-r"):
     self.client = cohere.Client(api_key)
     self.model = model
@@ -18,6 +19,9 @@ class CohereModel:
     )
 
     return completion.text
+  
+  def __str__(self) -> str:
+    return f"Cohere,{self.model}"
 
   def translate(self, prompt: str, src_lang: str, tgt_lang: str) -> str:
     prompt_template = f"""Instruction:
@@ -77,6 +81,9 @@ Sentence:
 # Test Cases
 if __name__ == "__main__":
   cohere_model = CohereModel()
+
+  # Model Details
+  print(cohere_model)
 
   # Translation
   src_lang = "English"

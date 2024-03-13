@@ -1,19 +1,24 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from models.base_module import BaseModel
 
 load_dotenv()
 
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
-class GoogleGenerativeAIModel:
+class GoogleGenerativeAIModel(BaseModel):
   def __init__(self, api_key: str = GOOGLE_API_KEY, model: str = "gemini-1.0-pro"):
     genai.configure(api_key=api_key)
     self.client = genai.GenerativeModel(model)
+    self.model = model
 
   def call(self, prompt: str) -> str:
     response = self.client.generate_content(prompt)
     return response.text
+
+  def __str__(self) -> str:
+    return f"GoogleGenerativeAI,{self.model}"
 
   def translate(self, prompt: str, src_lang: str, tgt_lang: str) -> str:
     prompt_template = f"""Instruction:
@@ -73,6 +78,9 @@ Sentence:
 # Test Cases
 if __name__ == "__main__":
   gemini_model = GoogleGenerativeAIModel()
+
+  # Model Details
+  print(gemini_model)
 
   # Translation
   src_lang = "English"

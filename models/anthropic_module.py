@@ -1,17 +1,21 @@
 import os
 from dotenv import load_dotenv
 from anthropic import Anthropic
+from models.base_module import BaseModel
 
 load_dotenv()
 
 CLAUDE_API_KEY = os.environ.get("CLAUDE_API_KEY")
 
-class ClaudeModel:
+class AnthropicModel(BaseModel):
   def __init__(self, api_key: str = CLAUDE_API_KEY, model: str = "claude-3-opus-20240229"):
     self.client = Anthropic(
         api_key=api_key,
     )
     self.model = model
+
+  def __str__(self) -> str:
+    return f"Anthropic,{self.model}"
 
   def call(self, prompt: str) -> str:
     message = self.client.messages.create(
@@ -83,7 +87,10 @@ Sentence:
     return self.call(prompt=prompt_template)
   
 if __name__ == "__main__":
-  claude_model = ClaudeModel()
+  claude_model = AnthropicModel()
+
+  # Model Details
+  print(claude_model)
 
   # Translation
   src_lang = "English"
