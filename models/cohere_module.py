@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import cohere
 from models.base_module import BaseModel
+from typing import List
 
 load_dotenv()
 
@@ -67,10 +68,14 @@ Sentence:
 
     return self.call(prompt=prompt_template)
 
-  def complete_missing_word(self, prompt: str) -> str:
+  def complete_missing_word(self, prompt: str, missing_words: List[str]) -> str:
+    newline = "\n"
     prompt_template = f"""Instruction:
-- Output the missing word from the following sentence.
+- Output the most appropriate missing word out of the provided options.
 - Only output the missing word.
+
+Options:
+{newline.join(['- ' + missing_word for missing_word in missing_words])}
 
 Sentence:
 {prompt}
@@ -108,6 +113,8 @@ if __name__ == "__main__":
   print(f"===== Completion - Sentence =====\nPrompt: {prompt}\nCompletion: {response}\nCombined: {prompt + ' ' + response}\n")
 
   # Completion - Missing Word
+  newline = "\n"
   prompt = "John moved the couch from the garage to the backyard to create space. The _ is small."
-  response = cohere_model.complete_missing_word(prompt=prompt)
-  print(f"===== Completion - Missing Word =====\nPrompt: {prompt}\nMissing Word: {response}\nCombined: {prompt.replace('_', response)}\n")
+  missing_words = ["garage", "backyard"]
+  response = cohere_model.complete_missing_word(prompt=prompt, missing_words=missing_words)
+  print(f"===== Completion - Missing Word =====\nPrompt: {prompt}\nOptions:\n{newline.join(['- ' + missing_word for missing_word in missing_words])}\nMissing Word: {response}\nCombined: {prompt.replace('_', response)}\n")

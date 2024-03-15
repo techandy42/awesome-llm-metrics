@@ -2,7 +2,7 @@ from typing import List, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from models.base_module import BaseModel
 
-def translate_mult(prompts: List[str], src_langs: List[str], tgt_langs: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
+def translate(prompts: List[str], src_langs: List[str], tgt_langs: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
     all_results = []  # To store results for all prompts
 
     # Validate input lengths
@@ -30,7 +30,7 @@ def translate_mult(prompts: List[str], src_langs: List[str], tgt_langs: List[str
     
     return all_results
 
-def summarize_mult(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
+def summarize(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
     all_results = []
 
     with ThreadPoolExecutor() as executor:
@@ -51,7 +51,7 @@ def summarize_mult(prompts: List[str], models: List[BaseModel]) -> List[List[Tup
 
     return all_results
 
-def q_and_a_mult(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
+def q_and_a(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
     all_results = []
 
     with ThreadPoolExecutor() as executor:
@@ -72,7 +72,7 @@ def q_and_a_mult(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple
 
     return all_results
 
-def complete_sentence_mult(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
+def complete_sentence(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
     all_results = []
 
     with ThreadPoolExecutor() as executor:
@@ -93,13 +93,16 @@ def complete_sentence_mult(prompts: List[str], models: List[BaseModel]) -> List[
 
     return all_results
 
-def complete_missing_word_mult(prompts: List[str], models: List[BaseModel]) -> List[List[Tuple[int, int, str]]]:
+def complete_missing_word(prompts: List[str], models: List[BaseModel], missing_words: List[List[str]]) -> List[List[Tuple[int, int, str]]]:
     all_results = []
 
-    with ThreadPoolExecutor() as executor:
-        for prompt_index, prompt in enumerate(prompts):
+    if not (len(prompts) == len(missing_words)):
+        raise ValueError("The lengths of prompts and missing_words_list must be equal.")
+    
+    for prompt_index, (prompt, missing_word_group) in enumerate(zip(prompts, missing_words)):
+        with ThreadPoolExecutor() as executor:
             future_to_indexes = {
-                executor.submit(model.complete_missing_word, prompt): (model_index, prompt_index)
+                executor.submit(model.complete_missing_word, prompt, missing_word_group): (model_index, prompt_index)
                 for model_index, model in enumerate(models)
             }
             
@@ -111,7 +114,7 @@ def complete_missing_word_mult(prompts: List[str], models: List[BaseModel]) -> L
 
             temp_results.sort(key=lambda x: (x[0], x[1]))
             all_results.append(temp_results)
-
+    
     return all_results
 
 # Test Case
@@ -155,7 +158,7 @@ if __name__ == "__main__":
   prompts = ["Berlin is the capital of Germany.", "Barcelona is a city in Spain.", "What is the answer to life, universe, and everything?"]
   src_langs = ["English", "English", "English"]
   tgt_langs = ["German", "Spanish", "French"]
-  all_results = translate_mult(prompts, src_langs, tgt_langs, models)
+  all_results = translate(prompts, src_langs, tgt_langs, models)
   for prompt_results in all_results:
     for prompt_index, model_index, translation in prompt_results:
       print(models[model_index])
